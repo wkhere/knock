@@ -21,6 +21,7 @@ func run(c *config) error {
 		cmd := exec.Command(c.path, c.args...)
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
+		// ^^ todo: wrap Stderr so that the "child: " prefix is shown
 
 		err = cmd.Start()
 		if err != nil {
