@@ -1,6 +1,7 @@
 ## knock
 
-`knock program` restarts running program when its binary file has been changed.
+`knock program` runs a program and restarts it
+when its binary file has been changed.
 
 It is mainly used to restart dev servers written in compiled languages
 (hi, Go!).
