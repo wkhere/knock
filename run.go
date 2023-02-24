@@ -35,7 +35,7 @@ func run(c *config) error {
 		done := make(chan struct{})
 		go func() {
 			cmd.Wait()
-			if time.Now().Sub(t0).Seconds() < 2 {
+			if time.Since(t0).Seconds() < 2 {
 				log.Printf("child exited early")
 			}
 			close(done)
