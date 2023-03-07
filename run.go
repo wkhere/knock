@@ -17,6 +17,9 @@ func run(c *config) error {
 		return fmt.Errorf("watcher: %w", err)
 	}
 
+	// todo: for a first start, "bind address already in use"
+	// may indicate that there is other process running; react to that
+
 	for verb := "started"; ; {
 		cmd := exec.Command(c.path, c.args...)
 		cmd.Stdout = os.Stdout
