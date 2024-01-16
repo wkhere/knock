@@ -6,7 +6,7 @@ import (
 )
 
 func parseArgs(args []string) (c config, _ error) {
-	if len(args) < 1 {
+	if len(args) < 1 || args[0] == "-h" || args[0] == "--help" {
 		return c, fmt.Errorf(usage)
 	}
 
