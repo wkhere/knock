@@ -19,7 +19,7 @@ func main() {
 		os.Exit(2)
 	}
 
-	log.SetFlags(log.Ldate | log.Ltime)
+	log.SetFlags(log.Lmicroseconds)
 
 	err = run(&c)
 	if err != nil {
