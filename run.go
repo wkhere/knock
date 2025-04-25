@@ -32,7 +32,7 @@ func run(c *config) error {
 		}
 		t0 := time.Now()
 
-		w.Add(c.path)
+		w.Add(cmd.Path)
 		log.Printf("child %s, pid: %d", verb, cmd.Process.Pid)
 
 		done := make(chan struct{})
