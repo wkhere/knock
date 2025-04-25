@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"syscall"
 	"time"
 
@@ -20,6 +21,7 @@ func run(c *config) error {
 	// todo: for a first start, "bind address already in use"
 	// may indicate that there is other process running; react to that
 
+start:
 	for verb := "started"; ; {
 		cmd := exec.Command(c.path, c.args...)
 		cmd.Stdout = os.Stdout
@@ -33,6 +35,10 @@ func run(c *config) error {
 		t0 := time.Now()
 
 		w.Add(cmd.Path)
+		w.Add(filepath.Dir(cmd.Path))
+
+		base := filepath.Base(cmd.Path)
+
 		log.Printf("child %s, pid: %d", verb, cmd.Process.Pid)
 
 		done := make(chan struct{})
@@ -52,27 +58,45 @@ func run(c *config) error {
 			}
 		}
 
-		select {
-		case ev, ok := <-w.Events:
-			if !ok {
-				return fmt.Errorf("watch: event chan closed")
-			}
-			switch {
-			case ev.Has(fsn.Create) || ev.Has(fsn.Write):
+		delay := 150 * time.Millisecond
+		timer := time.NewTimer(delay)
+		writing := false
+
+	events:
+		for {
+			select {
+			case ev, ok := <-w.Events:
+				if !ok {
+					return fmt.Errorf("watch: event chan closed")
+				}
+				if filepath.Base(ev.Name) == base &&
+					(ev.Has(fsn.Create) || ev.Has(fsn.Write)) {
+
+					writing = true
+					timer.Reset(delay)
+				}
+				continue events
+
+			case <-timer.C:
+				if !writing {
+					continue events
+				}
+				writing = false
+
 				if exited() {
-					continue
+					verb = "started"
+					continue start
 				}
 				goto restart
-			default:
-				log.Printf("WARN: watch op %s", ev.Op)
-			}
 
-		case err, ok := <-w.Errors:
-			if !ok {
-				return fmt.Errorf("watch: error chan closed")
+			case err, ok := <-w.Errors:
+				if !ok {
+					return fmt.Errorf("watch: error chan closed")
+				}
+				return fmt.Errorf("watch: received error: %w", err)
 			}
-			return fmt.Errorf("watch: received error: %w", err)
 		}
+
 	restart:
 		err = cmd.Process.Signal(os.Signal(syscall.SIGTERM))
 		if err != nil {
