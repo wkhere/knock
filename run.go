@@ -60,6 +60,7 @@ start:
 
 		delay := 150 * time.Millisecond
 		timer := time.NewTimer(delay)
+		timer.Stop() // need the timer when writing is started
 		writing := false
 
 	events:
