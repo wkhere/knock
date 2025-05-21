@@ -1,6 +1,6 @@
 go:
-	go vet
 	go build
+	go test .
 
 install: go
 	go install
