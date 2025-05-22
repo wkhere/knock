@@ -11,6 +11,7 @@ type config struct {
 	args []string
 
 	strict  bool
+	compare bool
 	verbose bool
 
 	help func(io.Writer)

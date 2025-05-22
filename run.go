@@ -39,7 +39,10 @@ start:
 			return err
 		}
 		t0 := time.Now()
-		h0, _ := hashFile(cmd.Path)
+		var h0 []byte // hash, if needed
+		if c.compare {
+			h0, _ = hashFile(cmd.Path)
+		}
 
 		w.Add(cmd.Path)
 		if !c.strict {
@@ -95,11 +98,13 @@ start:
 				}
 				writing = false
 
-				if h1, _ := hashFile(cmd.Path); bytes.Equal(h1, h0) {
-					if c.verbose {
-						log.Printf("// file not changed")
+				if c.compare {
+					if h1, _ := hashFile(cmd.Path); bytes.Equal(h1, h0) {
+						if c.verbose {
+							log.Printf("// file not changed")
+						}
+						continue events
 					}
-					continue events
 				}
 
 				if exited() {

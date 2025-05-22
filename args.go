@@ -19,6 +19,9 @@ flags:
 		case arg == "-s", arg == "--strict":
 			c.strict = true
 
+		case arg == "-c", arg == "--compare":
+			c.compare = true
+
 		case arg == "-h", arg == "--help":
 			c.help = func(w io.Writer) { fmt.Fprintln(w, usage) }
 			return c, nil
@@ -49,5 +52,5 @@ flags:
 	return c, nil
 }
 
-const usage = `Usage: knock [-v|--verbose] [-s|--strict] program arg...
+const usage = `Usage: knock [-v|--verbose] [-s|--strict] [-c|--compare] program arg...
   --strict: extra files in the same dir are ignored`
