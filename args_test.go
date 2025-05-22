@@ -16,6 +16,9 @@ func TestParseArgs(t *testing.T) {
 		args = func(a ...string) func(*config) bool {
 			return func(c *config) bool { return slices.Equal(c.args, a) }
 		}
+		strict = func(x bool) func(*config) bool {
+			return func(c *config) bool { return c.strict == x }
+		}
 		help = func(pattern string) func(*config) bool {
 			return func(c *config) bool {
 				if c.help == nil {
@@ -51,8 +54,14 @@ func TestParseArgs(t *testing.T) {
 		{"-q", "unknown flag -q", none},
 		{"--quux", "unknown flag --quux", none},
 		{"./nonexistent", "no such file or dir", none},
-		{"ls", "", all(path("/bin/ls"), args())},
-		{"ls 1 2", "", all(path("/bin/ls"), args("1", "2"))},
+		{"ls", "", all(path("/bin/ls"), args(), strict(false))},
+		{"ls 1 2", "", all(path("/bin/ls"), args("1", "2"), strict(false))},
+		{"-s", "expecting program", none},
+		{"-s --", "expecting program", none},
+		{"-s ls", "", all(path("/bin/ls"), args(), strict(true))},
+		{"--strict ls", "", all(path("/bin/ls"), args(), strict(true))},
+		{"-s -- ls", "", all(path("/bin/ls"), args(), strict(true))},
+		{"--strict -- ls", "", all(path("/bin/ls"), args(), strict(true))},
 	}
 
 	for i, tc := range tab {

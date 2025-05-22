@@ -13,6 +13,9 @@ flags:
 	for ; len(args) > 0; args = args[1:] {
 		switch arg := args[0]; {
 
+		case arg == "-s", arg == "--strict":
+			c.strict = true
+
 		case arg == "-h", arg == "--help":
 			c.help = func(w io.Writer) { fmt.Fprintln(w, usage) }
 			return c, nil
@@ -43,4 +46,5 @@ flags:
 	return c, nil
 }
 
-const usage = `Usage: knock program arg...`
+const usage = `Usage: knock [-s|--strict] program arg...
+  --strict: extra files in the same dir are ignored`

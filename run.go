@@ -35,7 +35,9 @@ start:
 		t0 := time.Now()
 
 		w.Add(cmd.Path)
-		w.Add(filepath.Dir(cmd.Path))
+		if !c.strict {
+			w.Add(filepath.Dir(cmd.Path))
+		}
 
 		base := filepath.Base(cmd.Path)
 
