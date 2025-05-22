@@ -9,13 +9,17 @@ import (
 func parseArgs(args []string) (c config, err error) {
 
 	rest := make([]string, 0, len(args))
-
+flags:
 	for ; len(args) > 0; args = args[1:] {
 		switch arg := args[0]; {
 
 		case arg == "-h", arg == "--help":
 			c.help = func(w io.Writer) { fmt.Fprintln(w, usage) }
 			return c, nil
+
+		case arg == "--":
+			rest = append(rest, args[1:]...)
+			break flags
 
 		case len(arg) > 1 && arg[0] == '-':
 			return c, fmt.Errorf("unknown flag %s", arg)
