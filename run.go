@@ -17,6 +17,7 @@ func run(c *config) error {
 	const (
 		writeOpsSpan = 150 * time.Millisecond
 		restartDelay = 200 * time.Millisecond
+		earlyExit    = 2 * time.Second
 	)
 
 	w, err := fsn.NewWatcher()
@@ -56,7 +57,7 @@ start:
 		done := make(chan struct{})
 		go func() {
 			cmd.Wait()
-			if time.Since(t0).Seconds() < 2 {
+			if time.Since(t0) <= earlyExit {
 				log.Printf("child exited early")
 			}
 			close(done)
