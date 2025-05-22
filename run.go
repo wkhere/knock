@@ -59,6 +59,8 @@ start:
 			cmd.Wait()
 			if time.Since(t0) <= earlyExit {
 				log.Printf("child exited[%d] early", cmd.ProcessState.ExitCode())
+			} else if !cmd.ProcessState.Success() {
+				log.Printf("child exited[%d]", cmd.ProcessState.ExitCode())
 			}
 			close(done)
 		}()
