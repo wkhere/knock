@@ -58,7 +58,7 @@ start:
 		go func() {
 			cmd.Wait()
 			if time.Since(t0) <= earlyExit {
-				log.Printf("child exited early")
+				log.Printf("child exited[%d] early", cmd.ProcessState.ExitCode())
 			}
 			close(done)
 		}()
