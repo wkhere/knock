@@ -41,6 +41,9 @@ start:
 		t0 := time.Now()
 		h0, _ := hashFile(cmd.Path)
 
+		// NOTE: file is added on each run. Fsnotify's double-add is a no-op,
+		// so if doesn't hurt. I could add it before the loop, but then it
+		// should be re-added after each remove or rename; now it's simpler.
 		w.Add(cmd.Path)
 		if !c.strict {
 			w.Add(filepath.Dir(cmd.Path))
