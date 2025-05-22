@@ -10,7 +10,8 @@ type config struct {
 	path string
 	args []string
 
-	strict bool
+	strict  bool
+	verbose bool
 
 	help func(io.Writer)
 }

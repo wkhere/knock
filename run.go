@@ -74,6 +74,9 @@ start:
 				}
 				if filepath.Base(ev.Name) == base &&
 					(ev.Has(fsn.Create) || ev.Has(fsn.Write)) {
+					if c.verbose {
+						log.Println("// ev:", ev)
+					}
 
 					writing = true
 					timer.Reset(delay)

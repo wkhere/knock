@@ -19,6 +19,9 @@ func TestParseArgs(t *testing.T) {
 		strict = func(x bool) func(*config) bool {
 			return func(c *config) bool { return c.strict == x }
 		}
+		v = func(x bool) func(*config) bool {
+			return func(c *config) bool { return c.verbose == x }
+		}
 		help = func(pattern string) func(*config) bool {
 			return func(c *config) bool {
 				if c.help == nil {
@@ -54,14 +57,17 @@ func TestParseArgs(t *testing.T) {
 		{"-q", "unknown flag -q", none},
 		{"--quux", "unknown flag --quux", none},
 		{"./nonexistent", "no such file or dir", none},
-		{"ls", "", all(path("/bin/ls"), args(), strict(false))},
-		{"ls 1 2", "", all(path("/bin/ls"), args("1", "2"), strict(false))},
+		{"ls", "", all(path("/bin/ls"), args(), strict(false), v(false))},
+		{"ls 1 2", "", all(path("/bin/ls"), args("1", "2"), strict(false), v(false))},
 		{"-s", "expecting program", none},
 		{"-s --", "expecting program", none},
-		{"-s ls", "", all(path("/bin/ls"), args(), strict(true))},
+		{"-s ls", "", all(path("/bin/ls"), args(), strict(true), v(false))},
 		{"--strict ls", "", all(path("/bin/ls"), args(), strict(true))},
 		{"-s -- ls", "", all(path("/bin/ls"), args(), strict(true))},
 		{"--strict -- ls", "", all(path("/bin/ls"), args(), strict(true))},
+		{"-v ls", "", all(path("/bin/ls"), args(), strict(false), v(true))},
+		{"--verbose ls", "", all(path("/bin/ls"), args(), strict(false), v(true))},
+		{"-v -s ls", "", all(path("/bin/ls"), args(), strict(true), v(true))},
 	}
 
 	for i, tc := range tab {

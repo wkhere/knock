@@ -13,6 +13,9 @@ flags:
 	for ; len(args) > 0; args = args[1:] {
 		switch arg := args[0]; {
 
+		case arg == "-v", arg == "--verbose":
+			c.verbose = true
+
 		case arg == "-s", arg == "--strict":
 			c.strict = true
 
@@ -46,5 +49,5 @@ flags:
 	return c, nil
 }
 
-const usage = `Usage: knock [-s|--strict] program arg...
+const usage = `Usage: knock [-v|--verbose] [-s|--strict] program arg...
   --strict: extra files in the same dir are ignored`
