@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io"
 	"log"
 	"os"
 )
@@ -8,6 +9,8 @@ import (
 type config struct {
 	path string
 	args []string
+
+	help func(io.Writer)
 }
 
 func main() {
@@ -17,6 +20,10 @@ func main() {
 	if err != nil {
 		log.Print(err)
 		os.Exit(2)
+	}
+	if c.help != nil {
+		c.help(os.Stdout)
+		os.Exit(0)
 	}
 
 	log.SetFlags(log.Lmicroseconds)

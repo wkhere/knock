@@ -16,6 +16,16 @@ func TestParseArgs(t *testing.T) {
 		args = func(a ...string) func(*config) bool {
 			return func(c *config) bool { return slices.Equal(c.args, a) }
 		}
+		help = func(pattern string) func(*config) bool {
+			return func(c *config) bool {
+				if c.help == nil {
+					return false
+				}
+				b := new(strings.Builder)
+				c.help(b)
+				return regexp.MustCompile(pattern).MatchString(b.String())
+			}
+		}
 		none = func(*config) bool { return false }
 		all  = func(ff ...func(*config) bool) func(*config) bool {
 			return func(c *config) bool {
@@ -34,9 +44,11 @@ func TestParseArgs(t *testing.T) {
 		errs  string
 		want  func(*config) bool
 	}{
-		{"", "Usage:", none},
-		{"-h", "Usage:", none},
-		{"--help", "Usage:", none},
+		{"", "expecting program", none},
+		{"-h", "", help("Usage:")},
+		{"--help", "", help("Usage:")},
+		{"-q", "unknown flag -q", none},
+		{"--quux", "unknown flag --quux", none},
 		{"./nonexistent", "no such file or dir", none},
 		{"ls", "", all(path("/bin/ls"), args())},
 		{"ls 1 2", "", all(path("/bin/ls"), args("1", "2"))},
