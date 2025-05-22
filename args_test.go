@@ -45,6 +45,7 @@ func TestParseArgs(t *testing.T) {
 		want  func(*config) bool
 	}{
 		{"", "expecting program", none},
+		{"--", "expecting program", none},
 		{"-h", "", help("Usage:")},
 		{"--help", "", help("Usage:")},
 		{"-q", "unknown flag -q", none},
