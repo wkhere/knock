@@ -13,6 +13,11 @@ import (
 )
 
 func run(c *config) error {
+	const (
+		writeOpsSpan = 150 * time.Millisecond
+		restartDelay = 200 * time.Millisecond
+	)
+
 	w, err := fsn.NewWatcher()
 	if err != nil {
 		return fmt.Errorf("watcher: %w", err)
@@ -60,8 +65,7 @@ start:
 			}
 		}
 
-		delay := 150 * time.Millisecond
-		timer := time.NewTimer(delay)
+		timer := time.NewTimer(writeOpsSpan)
 		timer.Stop() // need the timer when writing is started
 		writing := false
 
@@ -79,7 +83,7 @@ start:
 					}
 
 					writing = true
-					timer.Reset(delay)
+					timer.Reset(writeOpsSpan)
 				}
 				continue events
 
@@ -111,6 +115,6 @@ start:
 		}
 		<-done
 		verb = "restarted"
-		time.Sleep(200 * time.Millisecond) // better to wait for freed port
+		time.Sleep(restartDelay) // better to wait for freed port
 	}
 }
