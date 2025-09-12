@@ -56,6 +56,8 @@ func TestParseArgs(t *testing.T) {
 		{"--help", "", help("Usage:")},
 		{"-q", "unknown flag -q", none},
 		{"--quux", "unknown flag --quux", none},
+		{"-q -h", "", help("Usage:")},
+		{"-q --help", "", help("Usage:")},
 		{"./nonexistent", "no such file or dir", none},
 		{"ls", "", all(path("/bin/ls"), args(), strict(false), v(false))},
 		{"ls 1 2", "", all(path("/bin/ls"), args("1", "2"), strict(false), v(false))},

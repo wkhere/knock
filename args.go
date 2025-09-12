@@ -28,13 +28,18 @@ flags:
 			break flags
 
 		case len(arg) > 1 && arg[0] == '-':
-			return c, fmt.Errorf("unknown flag %s", arg)
+			err = fmt.Errorf("unknown flag %s", arg)
+			// note: if there will be more possible flag errors,
+			// there needs to be local errorf func saving only the 1st err
 
 		default:
 			rest = append(rest, arg)
 		}
 	}
 
+	if err != nil {
+		return c, err
+	}
 	if len(rest) == 0 {
 		return c, fmt.Errorf("expecting program to run")
 	}
