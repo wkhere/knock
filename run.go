@@ -73,8 +73,8 @@ start:
 			}
 		}
 
-		timer := time.NewTimer(writeOpsSpan)
-		timer.Stop() // need the timer when writing is started
+		timer := time.NewTimer(time.Hour) // arbitrary long duration, won't be used
+		timer.Stop()                      // need the timer only when writing is started
 		writing := false
 
 	events:
